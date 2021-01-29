@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<launch>
+    <!-- Parameters -->
+
+    <!-- Which RL algorithm to use (qlearn, ppo ...) -->
+    <arg name="algorithm" />
+    <param name="algorithm" value="$(arg algorithm)" />
+
+    <group if="$(eval (arg('algorithm') == 'qlearn' ))" >
+        <rosparam command="load" file="$(find ipa_kifz_viewplanning)/config/ipa_kifz_viewplanning_qlearn_params.yaml" />
+        <node name="ipa_kifz_viewplanning_v0" pkg="ipa_kifz_viewplanning" type="start_training_qlearn.py" output="screen"/>
+    </group>
+
+    <group if="$(eval (arg('algorithm') == 'ppo' ))" >
+        <rosparam command="load" file="$(find ipa_kifz_viewplanning)/config/ipa_kifz_viewplanning_ppo_params.yaml" />
+        <node name="ipa_kifz_viewplanning_v0" pkg="ipa_kifz_viewplanning" type="start_training_sb.py" output="screen"/>
+    </group>
+
+    <group if="$(eval (arg('algorithm') == 'dqn' ))" >
+        <rosparam command="load" file="$(find ipa_kifz_viewplanning)/config/ipa_kifz_viewplanning_dqn_params.yaml" />
+        <node name="ipa_kifz_viewplanning_v0" pkg="ipa_kifz_viewplanning" type="start_training_sb.py" output="screen"/>
+    </group>
+
+    <!-- Sample random viewpoints to re-use them later for RL training-->
+    <group if="$(eval (arg('algorithm') == 'viewpoint_sampling' ))" >
+        <rosparam command="load" file="$(find ipa_kifz_viewplanning)/config/ipa_kifz_viewplanning_qlearn_params.yaml" />
+        <node name="ipa_kifz_viewplanning_v0" pkg="ipa_kifz_viewplanning" type="viewpoint_sampler.py" output="screen"/>
+    </group>
+
+
+</launch>

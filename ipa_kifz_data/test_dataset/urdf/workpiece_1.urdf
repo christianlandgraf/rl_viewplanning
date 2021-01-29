@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- This URDF was automatically created by SolidWorks to URDF Exporter! Originally created by Stephen Brawner (brawner@gmail.com) 
+     Commit Version: 1.5.1-0-g916b5db  Build Version: 1.5.7152.31018
+     For more information, please see http://wiki.ros.org/sw_urdf_exporter -->
+<robot
+  name="workpiece_1">
+  <link
+    name="workpiece_1">
+    <inertial>
+      <origin
+        xyz="0.2985 0.39022 0.014952"
+        rpy="0 0 0" />
+      <mass
+        value="2.094" />
+      <inertia
+        ixx="0.07031"
+        ixy="-0.00054528"
+        ixz="-1.8552E-05"
+        iyy="0.016248"
+        iyz="-8.7838E-07"
+        izz="0.085821" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://ipa_kifz_data/test_dataset/meshes/workpiece_1.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.79216 0.81961 0.93333 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://ipa_kifz_data/test_dataset/meshes/workpiece_1.STL" />
+      </geometry>
+    </collision>
+  </link>
+
+  <!-- Turn of Gravity to fix workpiece at initial position-->
+  <gazebo reference="workpiece_1">
+    <turnGravityOff>true</turnGravityOff>
+    <selfCollide>true</selfCollide>
+    <material>Gazebo/Green</material>
+  </gazebo>
+</robot>

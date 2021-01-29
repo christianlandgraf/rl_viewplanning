@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://ros.org/wiki/xacro" name="ipa_kifz_env">
+
+    <link name="world" />
+
+    <!-- Create the platform and attach it to the world-->
+    <xacro:include filename="$(find ipa_kifz_description)/urdf/demmeler_welding_table.urdf.xacro" />
+    <xacro:demmeler_welding_table prefix="" />
+    <joint name="welding_table" type="fixed"> 
+        <parent link="world" />
+        <child link="welding_table_link" />
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+    </joint>
+
+
+</robot>

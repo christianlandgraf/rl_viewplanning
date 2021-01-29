@@ -3,6 +3,14 @@
 
 ## Overview
 
+- ipa_kifz_data: contains an exemplary test dataset
+- ipa_kifz_description: robot cell layouts in URDF format and robot calibration
+- ipa_kifz_gazebo: Gazebo models and environment
+- ipa_kifz_moveit_config: Moveit Configuration for the robot cell
+- ipa_kifz_viewplanning: RL algorithms and learning scripts. Additional helper classes as a Custom Logger and Workpiece Handler
+- openai_ros: Customized and heavily refactored version of the [OpenAI Ros Library](http://wiki.ros.org/openai_ros)
+- project_kifz: Meta Package. Build the project via ```catkin build project_kifz```
+- training_results: Contains the experimental results
 
 ## Installation
 

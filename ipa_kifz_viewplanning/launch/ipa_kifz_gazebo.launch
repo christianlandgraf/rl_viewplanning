@@ -1,0 +1,101 @@
+<?xml version="1.0"?>
+<launch>
+    <!-- Start gazebo in paused state to allow robot to reach initial pose  -->
+    <arg name="paused" default="true"/>
+    <!-- Start Gazebo GUI, without GUI the simulation is faster -->
+    <arg name="gazebo_gui" default="true"/>
+    <!-- Start RViz, without RViz the simulation is faster -->
+    <arg name="rviz_gui" default="false" />
+    <!-- True, if the whole robot and its movement is simulate, otherwise only the sensor is positioned -->
+    <arg name="sensor_only" default="false" />
+    <param name="sensor_only" value="$(arg sensor_only)" />
+    
+    <!-- startup simulated world -->
+    <include file="$(find gazebo_ros)/launch/empty_world.launch">
+        <arg name="world_name" default="$(find ipa_kifz_gazebo)/worlds/empty_ipa.world"/>
+        <arg name="paused" value="$(arg paused)"/>
+        <arg name="gui" value="$(arg gazebo_gui)"/>
+    </include>
+
+  <!-- Node to advertise service used for computing the area gain-->
+  <node pkg="ipa_kifz_viewplanning" type="point_cloud_handler" name="point_cloud_handler"/>
+
+  <!-- Do not simulate the robot (layout, kinematics, semantic description, ...) -->
+  <group if="$(arg sensor_only)">
+
+    <!-- Load and spawn environment (welding table) -->
+    <param name="robot_description" 
+        command="$(find xacro)/xacro '$(find ipa_kifz_description)/urdf/ipa_kifz_env.urdf.xacro'"/>
+    <node name="spawn_gazebo_model" pkg="gazebo_ros" type="spawn_model" args="-urdf  -param robot_description -model robot -unpause"
+        respawn="false" output="screen" />
+
+    <!-- Load and spawn sensor-->
+    <include file="$(find ipa_kifz_viewplanning)/launch/spawn_sensor.launch">
+        <arg name="sensor_x" value="0.5"/>
+        <arg name="sensor_y" value="-0.6"/>
+        <arg name="sensor_z" value="1.5"/>
+        <arg name="sensor_R" value="1.53"/>
+        <arg name="sensor_P" value="0.4"/>
+        <arg name="sensor_Y" value="0.0"/>
+    </include>
+
+    <!-- If desired, load Rviz visualization-->
+    <group if="$(arg rviz_gui)">
+      <arg name="rviz_config" value="$(find ipa_kifz_viewplanning)/launch/sensor.rviz"/>
+      <arg name="command_args" value="-d $(arg rviz_config)" />
+      <node name="$(anon rviz)" pkg="rviz" type="rviz" respawn="false" args="$(arg command_args)" output="screen" />
+    </group>
+  </group>
+
+  <group unless="$(arg sensor_only)">
+    <!-- send robot urdf to param server -->
+    <param name="robot_description" 
+        command="$(find xacro)/xacro '$(find ipa_kifz_description)/urdf/ipa_kifz.urdf.xacro'"/>
+
+    <node name="spawn_gazebo_model" pkg="gazebo_ros" type="spawn_model" args="-urdf  -param robot_description -model robot 
+        -J shoulder_pan_joint -0.85
+        -J shoulder_lift_joint -2.0
+        -J elbow_joint 2.0
+        -J wrist_1_joint 0.67
+        -J wrist_2_joint 0.85
+        -J wrist_3_joint -2.1
+        -unpause" 
+        respawn="false" output="screen" />
+
+    <!-- <node pkg="robot_state_publisher" type="robot_state_publisher" name="robot_state_publisher">
+        <param name="publish_frequency" type="double" value="30.0" />
+    </node> -->
+    <include file="$(find ipa_kifz_moveit_config)/launch/ros_controllers.launch"/>
+
+    <!-- MoveIt & More, needs to be moved to another file, probably! -->
+
+
+    <!-- specify the planning pipeline -->
+    <arg name="pipeline" default="ompl" />
+
+    <!-- Load the URDF, SRDF and other .yaml configuration files on the param server -->
+    <include file="$(find ipa_kifz_moveit_config)/launch/planning_context.launch">
+      <arg name="load_robot_description" value="true"/>
+    </include>
+
+    <!-- Remap trajectory controller if in simulation -->
+    <remap from="/scaled_pos_traj_controller/follow_joint_trajectory" to="/arm_controller/follow_joint_trajectory"/>
+
+    <!-- Run the main MoveIt! executable without trajectory execution (we do not have controllers configured by default) -->
+    <include file="$(find ipa_kifz_moveit_config)/launch/move_group.launch">
+          <arg name="allow_trajectory_execution" value="true"/>
+          <arg name="fake_execution" value="false"/>
+          <arg name="info" value="true"/>
+          <arg name="pipeline" value="$(arg pipeline)"/>
+    </include>
+
+    <!-- Run Rviz and load the default config to see the state of the move_group node -->
+    <group if="$(arg rviz_gui)">
+      <include file="$(find ipa_kifz_moveit_config)/launch/moveit_rviz.launch">
+        <arg name="rviz_config" value="$(find ipa_kifz_moveit_config)/launch/moveit.rviz"/>
+      </include>
+    </group>
+
+  </group>
+  
+</launch>

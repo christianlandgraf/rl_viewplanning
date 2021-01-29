@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<package format="2">>
+  <name>project_kifz</name>
+  <version>0.0.1</version>
+  <description>IPA KI-FZ View Planning with RL</description>
+
+  <author email="christian.landgraf@ipa.fraunhofer.de">Christian Landgraf</author>
+  <maintainer email="christian.landgraf@ipa.fraunhofer.de">Christian Landgraf</maintainer>
+  <license>tmp</license>
+
+  <buildtool_depend>catkin</buildtool_depend>
+  <exec_depend>ipa_kifz_data</exec_depend>
+  <exec_depend>ipa_kifz_description</exec_depend>
+  <exec_depend>ipa_kifz_viewplanning</exec_depend>
+  <exec_depend>ipa_kifz_moveit_config</exec_depend>
+  <exec_depend>ipa_kifz_gazebo</exec_depend>
+  <exec_depend>openai_ros</exec_depend>
+  <export>
+    <metapackage/>
+  </export>
+</package>

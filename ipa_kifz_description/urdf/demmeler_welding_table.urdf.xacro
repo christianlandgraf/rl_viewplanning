@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- This URDF was automatically created by SolidWorks to URDF Exporter! Originally created by Stephen Brawner (brawner@gmail.com) 
+     Commit Version: 1.5.1-0-g916b5db  Build Version: 1.5.7152.31018
+     For more information, please see http://wiki.ros.org/sw_urdf_exporter -->
+<robot xmlns:xacro="http://wiki.ros.org/xacro">
+  <xacro:macro name="demmeler_welding_table" params="prefix">
+    <link
+        name="welding_table_link">
+        <inertial>
+        <origin
+            xyz="-0.0012522 -2.40509999999971E-05 0.047978"
+            rpy="0 0 0" />
+        <mass
+            value="818.97" />
+        <inertia
+            ixx="131.3"
+            ixy="-0.020834"
+            ixz="-0.064705"
+            iyy="472.04"
+            iyz="0.00103370000000742"
+            izz="593.28" />
+        </inertial>
+        <visual>
+        <origin
+            xyz="0 0 0"
+            rpy="1.5707963267949 0 0" />
+        <geometry>
+            <mesh
+            filename="package://ipa_kifz_description/meshes/demmeler_welding_table.STL" />
+        </geometry>
+        <material
+            name="">
+            <color
+            rgba="0.75294 0.75294 0.75294 1" />
+        </material>
+        </visual>
+        <collision>
+        <origin
+            xyz="0 0 0"
+            rpy="1.5707963267949 0 0" />
+        <geometry>
+            <mesh
+            filename="package://ipa_kifz_description/meshes/demmeler_welding_table.STL" />
+        </geometry>
+        </collision>
+    </link>
+  </xacro:macro>
+</robot>

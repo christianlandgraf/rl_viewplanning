@@ -1,0 +1,6 @@
+bool standalone_pcd
+sensor_msgs/PointCloud2 new_pcd
+sensor_msgs/PointCloud2 previous_pcd
+---
+sensor_msgs/PointCloud2 cumulated_pcd
+float64 area_gain

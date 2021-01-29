@@ -1,0 +1,59 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://ros.org/wiki/xacro" name="ipa_kifz">
+
+    <xacro:arg name="transmission_hw_interface" default="hardware_interface/PositionJointInterface"/>
+
+    <!-- common stuff -->
+    <xacro:include filename="$(find ur_e_description)/urdf/common.gazebo.xacro" />
+
+    <!-- include gazebo sensor plugin -->
+    <xacro:include filename="$(find ipa_kifz_gazebo)/models/ensenso.gazebo" />
+
+
+    <!-- Include UR10e urdf -->
+    <xacro:include filename="$(find ur_e_description)/urdf/ur10e.urdf.xacro" />
+
+    <!-- Add UR10e arm with limited joints -->
+    <xacro:arg name="kinematics_config" default="$(find ipa_kifz_description)/calibration/calibration_ur10e.yaml"/>
+    <xacro:ur10e_robot prefix="" joint_limited="false"
+        transmission_hw_interface="$(arg transmission_hw_interface)"
+        kinematics_file="${load_yaml('$(arg kinematics_config)')}"
+    />
+    <!-- Attach UR10e to platform frame-->
+    <link name="world" />
+
+    <joint name="platform_to_robot" type="fixed" >
+        <parent link="welding_table_link" />
+        <child link="base_link" />
+        <origin xyz="0.5 -0.6 1.02" rpy="0 0 0" />
+    </joint>
+
+    <!-- Create the platform and attach it to the world-->
+    <xacro:include filename="$(find ipa_kifz_description)/urdf/demmeler_welding_table.urdf.xacro" />
+    <xacro:demmeler_welding_table prefix="" />
+    <joint name="demmeler_welding_table" type="fixed">
+        <parent link="world" />
+        <child link="welding_table_link" />
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+    </joint>
+
+    <!-- Attach an endeffector to the robot flange-->
+    <xacro:include filename="$(find ipa_kifz_description)/urdf/welding_gun_ensenso.urdf.xacro" />
+    <xacro:welding_gun_ensenso prefix="" />
+    <joint name="welding_gun_joint" type="fixed">
+        <parent link="ee_link" />
+        <child link="welding_gun_link" />
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+    </joint>
+
+    <!-- Add sensor plugin for simulation -->
+    <link name="ensenso_sim_link" />
+    <joint name="ensenso_sim_joint" type="fixed">
+        <parent link="tcp_sensor_link"/>
+        <child link="ensenso_sim_link"/>
+        <origin xyz="0 0 0"
+                rpy="0 -1.5708 -1.5708"/>
+    </joint>
+
+
+</robot>

@@ -1,0 +1,21 @@
+<launch>
+    <arg name="sensor_x" default="0" />
+    <arg name="sensor_y" default="0" />
+    <arg name="sensor_z" default="0" />
+    <arg name="sensor_R" default="0" />
+    <arg name="sensor_P" default="0" />
+    <arg name="sensor_Y" default="0" />
+
+    <param name="sensor_description" 
+        command="$(find xacro)/xacro '$(find ipa_kifz_description)/urdf/ipa_kifz_ensenso.urdf.xacro'
+                sensor_x:=$(arg sensor_x)
+                sensor_y:=$(arg sensor_y)
+                sensor_z:=$(arg sensor_z)
+                sensor_R:=$(arg sensor_R)
+                sensor_P:=$(arg sensor_P)
+                sensor_Y:=$(arg sensor_Y)"/>
+
+    <node name="spawn_sensor_model" pkg="gazebo_ros" type="spawn_model" args="-urdf  -param sensor_description -model sensor -unpause" 
+        respawn="false" output="screen" />
+</launch>
+

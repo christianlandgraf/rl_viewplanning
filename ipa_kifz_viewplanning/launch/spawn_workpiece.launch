@@ -1,0 +1,18 @@
+<launch>
+
+  <arg name="dataset" default="test_dataset" />
+  <arg name="object"  /> 
+  <arg name="x" default="1.5" />
+  <arg name="y" default="-0.2" />
+  <arg name="z" default="1.06" />
+  <arg name="R" default="3.14" />
+  <arg name="P" default="-3.14" />
+  <arg name="Y" default="0" />
+
+  <node name="spawn_urdf_1" pkg="gazebo_ros" type="spawn_model"
+    args="-file $(find ipa_kifz_data)/$(arg dataset)/urdf/$(arg object).urdf
+          -urdf -x $(arg x) -y $(arg y) -z $(arg z) -R $(arg R) -P $(arg P) -Y $(arg Y)
+          -model $(arg object)"
+  />
+
+</launch>

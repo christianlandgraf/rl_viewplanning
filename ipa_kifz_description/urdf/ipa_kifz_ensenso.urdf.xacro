@@ -1,0 +1,219 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://ros.org/wiki/xacro" name="ipa_kifz_ensenso">
+    <!-- The "fake" Sensor layout-->  
+
+    <xacro:arg name="sensor_x" default="0"/>
+    <xacro:arg name="sensor_y" default="0"/>
+    <xacro:arg name="sensor_z" default="0"/>
+    <xacro:arg name="sensor_R" default="0"/>
+    <xacro:arg name="sensor_P" default="0"/>
+    <xacro:arg name="sensor_Y" default="0"/>
+
+    <!-- include gazebo sensor plugin -->
+    <xacro:include filename="$(find ipa_kifz_gazebo)/models/ensenso.gazebo" />
+    <link name="world" />
+
+    <!-- Add sensor plugin for simulation -->
+    <link name="ensenso_sim_link">
+        <inertial>
+            <origin xyz="0 0 0" rpy="0 0 0"/>
+            <mass value="0.001" />
+            <inertia ixx="0" ixy="0.0" ixz="0.0"
+                     iyy="0" iyz="0.0" izz="0"/>
+        </inertial>
+        <visual>
+            <geometry>
+                <box size="0.01 0.01 0.01" />
+            </geometry>
+        </visual>
+        <collision>
+        
+            <geometry>
+                <box size="0.01 0.01 0.01" />
+            </geometry>
+        </collision>
+    </link>
+
+    <link name="base_link">
+        <inertial>
+            <origin xyz="0 0 0" rpy="0 0 0"/>
+            <mass value="0.0001" />
+            <inertia ixx="0" ixy="0.0" ixz="0.0"
+                     iyy="0" iyz="0.0" izz="0"/>
+        </inertial>
+    </link>
+
+    <link name="link_1">
+        <inertial>
+            <origin xyz="0 0 0" rpy="0 0 0"/>
+            <mass value="0.0001" />
+            <inertia ixx="0" ixy="0.0" ixz="0.0"
+                     iyy="0" iyz="0.0" izz="0"/>
+        </inertial>
+    </link>
+    <link name="link_2">
+        <inertial>
+            <origin xyz="0 0 0" rpy="0 0 0"/>
+            <mass value="0.0001" />
+            <inertia ixx="0" ixy="0.0" ixz="0.0"
+                     iyy="0" iyz="0.0" izz="0"/>
+        </inertial>
+    </link>
+    <link name="link_3">
+        <inertial>
+            <origin xyz="0 0 0" rpy="0 0 0"/>
+            <mass value="0.0001" />
+            <inertia ixx="0" ixy="0.0" ixz="0.0"
+                     iyy="0" iyz="0.0" izz="0"/>
+        </inertial>
+    </link>
+    <link name="link_4">
+        <inertial>
+            <origin xyz="0 0 0" rpy="0 0 0"/>
+            <mass value="0.0001" />
+            <inertia ixx="0" ixy="0.0" ixz="0.0"
+                     iyy="0" iyz="0.0" izz="0"/>
+        </inertial>
+    </link>
+    <link name="link_5">
+        <inertial>
+            <origin xyz="0 0 0" rpy="0 0 0"/>
+            <mass value="0.0001" />
+            <inertia ixx="0" ixy="0.0" ixz="0.0"
+                     iyy="0" iyz="0.0" izz="0"/>
+        </inertial>
+    </link>
+    <link name="link_6">
+        <inertial>
+            <origin xyz="0 0 0" rpy="0 0 0"/>
+            <mass value="0.0001" />
+            <inertia ixx="0" ixy="0.0" ixz="0.0"
+                     iyy="0" iyz="0.0" izz="0"/>
+        </inertial>
+    </link>
+
+
+    <joint name="base_joint" type="fixed">
+        <parent link="world"/>
+        <child link="base_link"/>
+    </joint>
+
+    <joint name="joint_trans_x" type="prismatic">
+        <parent link="base_link"/>
+        <child link="link_1"/>
+        <axis xyz="1 0 0" />
+        <!--<limit lower="-10" upper="10" effort="0" velocity="200"/>-->
+        <limit lower="-100" upper="100" effort="0" velocity="0"/>
+        <dynamics damping="100.0" friction="100.0"/>
+    </joint>
+    <joint name="joint_trans_y" type="prismatic">
+        <parent link="link_1"/>
+        <child link="link_2"/>
+        <axis xyz="0 1 0" />
+        <!--<limit lower="-10" upper="10" effort="0" velocity="200"/>-->
+        <limit lower="-100" upper="100" effort="0" velocity="0"/>
+        <dynamics damping="100.0" friction="100.0"/>
+    </joint>
+    <joint name="joint_trans_z" type="prismatic">
+        <parent link="link_2"/>
+        <child link="link_3"/>
+        <axis xyz="0 0 1" />
+        <!--<limit lower="-10" upper="10" effort="0" velocity="200"/>-->
+        <limit lower="-100" upper="100" effort="0" velocity="0"/>
+        <dynamics damping="100.0" friction="100.0"/>
+    </joint>
+    <joint name="joint_rot_x" type="revolute">
+        <parent link="link_3"/>
+        <child link="link_4"/>
+        <axis xyz="1 0 0" />
+        <!--<limit lower="-10" upper="10" effort="0" velocity="1"/>-->
+        <limit lower="-100" upper="100" effort="0" velocity="0"/>
+        <dynamics damping="100.0" friction="100.0"/>
+    </joint>
+    <joint name="joint_rot_y" type="revolute">
+        <parent link="link_4"/>
+        <child link="link_5"/>
+        <axis xyz="0 1 0" />
+        <!--<limit lower="-10" upper="10" effort="0" velocity="1"/>-->
+        <limit lower="-100" upper="100" effort="0" velocity="0"/>
+        <dynamics damping="100.0" friction="100.0"/>
+    </joint>
+    <joint name="joint_rot_z" type="revolute">
+        <parent link="link_5"/>
+        <child link="link_6"/>
+        <axis xyz="0 0 1" />
+        <!--<limit lower="-10" upper="10" effort="0" velocity="1"/>-->
+        <limit lower="-100" upper="100" effort="0" velocity="0"/>
+        <dynamics damping="100.0" friction="100.0"/>
+    </joint>
+
+    <!-- Add sensor plugin for simulation -->
+    <!-- <link name="ensenso_sim_link" /> -->
+    <joint name="ensenso_sim_joint" type="fixed">
+        <parent link="link_6"/>
+        <child link="ensenso_sim_link"/>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <!-- <origin xyz="0 0 0" rpy="0 -1.5708 -1.5708"/> -->
+    </joint>
+
+  
+  <!--<gazebo reference="ensenso_sim_link">
+    <turnGravityOff>false</turnGravityOff>
+  </gazebo>-->
+  <gazebo reference="link_1">
+    <turnGravityOff>true</turnGravityOff>
+    <kp>1000000.0</kp>
+    <kd>1.0</kd>
+    <mu1>0.8</mu1>
+    <mu2>0.8</mu2>
+    <maxVel>0.0</maxVel>
+    <minDepth>0.001</minDepth>
+  </gazebo>
+  <gazebo reference="link_2">
+    <turnGravityOff>true</turnGravityOff>
+    <kp>1000000.0</kp>
+    <kd>1.0</kd>
+    <mu1>0.8</mu1>
+    <mu2>0.8</mu2>
+    <maxVel>0.0</maxVel>
+    <minDepth>0.001</minDepth>
+  </gazebo>
+  <gazebo reference="link_3">
+    <turnGravityOff>true</turnGravityOff>
+    <kp>1000000.0</kp>
+    <kd>1.0</kd>
+    <mu1>0.8</mu1>
+    <mu2>0.8</mu2>
+    <maxVel>0.0</maxVel>
+    <minDepth>0.001</minDepth>
+  </gazebo>
+  <gazebo reference="link_4">
+    <turnGravityOff>true</turnGravityOff>
+    <kp>1000000.0</kp>
+    <kd>1.0</kd>
+    <mu1>0.8</mu1>
+    <mu2>0.8</mu2>
+    <maxVel>0.0</maxVel>
+    <minDepth>0.001</minDepth>
+  </gazebo>
+  <gazebo reference="link_5">
+    <turnGravityOff>true</turnGravityOff>
+    <kp>1000000.0</kp>
+    <kd>1.0</kd>
+    <mu1>0.8</mu1>
+    <mu2>0.8</mu2>
+    <maxVel>0.0</maxVel>
+    <minDepth>0.001</minDepth>
+  </gazebo>
+  <gazebo reference="link_6">
+    <turnGravityOff>true</turnGravityOff>
+    <kp>1000000.0</kp>
+    <kd>1.0</kd>
+    <mu1>0.8</mu1>
+    <mu2>0.8</mu2>
+    <maxVel>0.0</maxVel>
+    <minDepth>0.001</minDepth>
+  </gazebo>
+
+
+</robot>

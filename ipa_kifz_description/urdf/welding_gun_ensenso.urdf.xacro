@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- This URDF was automatically created by SolidWorks to URDF Exporter! Originally created by Stephen Brawner (brawner@gmail.com) 
+     Commit Version: 1.5.1-0-g916b5db  Build Version: 1.5.7152.31018
+     For more information, please see http://wiki.ros.org/sw_urdf_exporter -->
+<robot xmlns:xacro="http://wiki.ros.org/xacro">
+  <xacro:macro name="welding_gun_ensenso" params="prefix">
+    <link
+        name="welding_gun_link">
+        <inertial>
+        <origin
+            xyz="0.022511 -0.19226 -0.0005672"
+            rpy="0 0 0" />
+        <mass
+            value="2.1666" />
+        <inertia
+            ixx="0.031806"
+            ixy="0.0071618"
+            ixz="-0.0016403"
+            iyy="0.015478"
+            iyz="0.0014184"
+            izz="0.038869" />
+        </inertial>
+        <visual>
+        <origin
+            xyz="0 0 0"
+            rpy="0 0 0" />
+        <geometry>
+            <mesh
+            filename="package://ipa_kifz_description/meshes/endeffector_withcamera.STL" />
+        </geometry>
+        <material
+            name="">
+            <color
+            rgba="0.79216 0.81961 0.93333 1" />
+        </material>
+        </visual>
+        <collision>
+        <origin
+            xyz="0 0 0"
+            rpy="0 0 0" />
+        <geometry>
+            <mesh
+            filename="package://ipa_kifz_description/meshes/endeffector_withcamera.STL" />
+        </geometry>
+        </collision>
+    </link>
+
+    <!-- Welding Gun TCP-->
+    <link  name="tcp_welding_gun_link" />
+    <joint name="tcp_welding_gun_joint" type="fixed">
+      <origin xyz="0.28395 -0.28307  -0.07574" rpy="1.5708 0 0.523599" /> <!-- rpy="1.9 0 0.523599" -->
+      <parent link="welding_gun_link" />
+      <child link="tcp_welding_gun_link" />
+    </joint>
+
+    <!-- Stickout TCP -->
+    <link  name="tcp_stickout_link" />
+    <joint name="tcp_stickout_joint" type="fixed">
+      <origin xyz="0 0 0.02" rpy="0 0 0" />
+      <parent link="tcp_welding_gun_link" />
+      <child link="tcp_stickout_link" />
+    </joint>
+
+    <!-- Sensor TCP -->
+    <link name="tcp_sensor_link" />
+    <joint name="tcp_sensor_joint" type="fixed">
+      <origin xyz="0.32895 -0.09438 -0.01906" rpy="1.5708 0 0.523599" />
+      <parent link="welding_gun_link" />
+      <child link="tcp_sensor_link" />
+    </joint>
+
+    <gazebo reference="welding_gun_link">
+      <material>Gazebo/Gray</material>
+    </gazebo>
+
+  </xacro:macro>
+</robot>

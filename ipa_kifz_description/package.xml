@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<package format="2">
+  <name>ipa_kifz_description</name>
+  <version>0.0.1</version>
+  <description>The ipa_kifz_description package</description>
+
+  <author email="christian.landgraf@ipa.fraunhofer.de">Christian Landgraf</author>
+  <maintainer email="christian.landgraf@ipa.fraunhofer.de">Christian Landgraf</maintainer>
+
+  <license>tmp</license>
+
+  <build_depend>universal_robots</build_depend>
+  <exec_depend>universal_robots</exec_depend>
+  <buildtool_depend>catkin</buildtool_depend>
+
+</package>

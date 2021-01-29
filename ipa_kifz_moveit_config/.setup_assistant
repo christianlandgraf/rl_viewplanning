@@ -1,0 +1,11 @@
+moveit_setup_assistant_config:
+  URDF:
+    package: ipa_kifz_description
+    relative_path: urdf/ipa_kifz.urdf.xacro
+    xacro_args: ""
+  SRDF:
+    relative_path: config/ipa_kifz.srdf
+  CONFIG:
+    author_name: Christian Landgraf
+    author_email: christian.landgraf@ipa.fraunhofer.de
+    generated_timestamp: 1594842640

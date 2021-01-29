@@ -1,0 +1,44 @@
+<?xml version="1.0"?>
+<robot>
+  <gazebo reference="ensenso_sim_link">
+    <sensor type="gpu_ray" name="ensenso_camera">
+      <pose>0 0 0 0 0 0</pose>
+      <visualize>true</visualize>
+      <update_rate>10</update_rate>
+      <ray>
+        <scan>
+          <horizontal>
+            <samples>256</samples>
+            <resolution>1</resolution>
+            <min_angle>-${31.34*3.1415926535897931/180.0}</min_angle>
+            <max_angle> ${31.34*3.1415926535897931/180.0}</max_angle>
+          </horizontal>
+          <vertical>
+            <samples>205</samples>
+            <resolution>1</resolution>
+            <min_angle>-${25.68*3.1415926535897931/180.0}</min_angle>
+            <max_angle> ${25.68*3.1415926535897931/180.0}</max_angle>
+          </vertical>
+        </scan>
+        <range>
+          <min>0.3</min>
+          <max>0.5</max>
+          <resolution>1</resolution>
+        </range>
+        <noise>
+          <type>gaussian</type>
+          <mean>0.0</mean>
+          <stddev>0.0</stddev>
+        </noise>
+      </ray>
+      <plugin name="gazebo_ros_laser_controller" filename="libgazebo_ros_velodyne_gpu_laser.so">
+        <topicName>/point_cloud</topicName>
+        <frameName>ensenso_sim_link</frameName>
+        <min_range>0.312</min_range>
+        <max_range>0.464</max_range>
+        <gaussianNoise>0.000</gaussianNoise>
+      </plugin>
+    </sensor>
+  </gazebo>
+</robot>
+
