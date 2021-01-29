@@ -1,0 +1,21 @@
+ipa_kifz: #namespace
+    task_and_robot_environment_name: 'IPA_KIFZ_Viewplanning-v0'
+
+    #ppo parameters
+
+    policy: 'MlpPolicy'
+    learning_rate: 0.0001 #00025
+    n_steps: 2 #128 # Number of Steps per update
+    batch_size: 16 # Minibatches
+    n_epochs: 1 #4 # Number of Epochs for Surrogate
+    gamma: 0.7 #0.999 # discount factor
+    gae_lambda: 0.95 # Trade-off Factor for GAE
+    clip_range: 0.2 # PPO Policy Clipping Range
+    ent_coef: 0.1 #0.01 # Loss Entropy Coefficient
+    vf_coef: 0.5 # Loss Value Function Coefficient
+    max_grad_norm: 0.5 # Maximum Value for Gradient Clipping
+
+    # training parameters
+    total_timesteps: 2000000
+    num_envs: 1    
+    

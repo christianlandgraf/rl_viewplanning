@@ -1,0 +1,10 @@
+ipa_kifz: #namespace
+    task_and_robot_environment_name: 'IPA_KIFZ_Viewplanning-v0'
+
+    #qlearn parameters
+    alpha: 0.1
+    gamma: 0.7
+    epsilon: 0.9 #0.99
+    epsilon_discount: 0.997 # roughly as many digits as orders of nepisodes
+    nepisodes: 2500
+    max_nsteps: 5

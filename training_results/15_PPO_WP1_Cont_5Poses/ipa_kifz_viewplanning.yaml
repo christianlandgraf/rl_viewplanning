@@ -1,0 +1,43 @@
+ipa_kifz_viewplanning: #namespace
+   
+  # Workpiece
+  workpiece_name: "workpiece_1"
+  workpiece_pose: [0,0,0,0,0,0,1]
+
+  # Define an initial pose and a sphere around that
+  # The pose is defined as the transformation from world to sensor tcp
+  init_pos_z: 1.4
+  init_rot_qx: 0
+  init_rot_qy: 0.5
+  init_rot_qz: 0
+  init_rot_qw: 0.8660254
+  min_range_x: 1.1999
+  max_range_x: 1.6001
+  min_range_y: -1.001
+  max_range_y: -0.1999
+  min_range_z: 1.3999
+  max_range_z: 1.4001
+
+  # Whether the action space should be discretized or not
+  is_discretized: False
+  
+  # If discretized, choose whether to use a grid instead of the pre-sampled poses
+  use_grid: False
+  # if grid is chosen, decide whether it should be square or triangle grid
+  triangle_grid: False # if set to false, a square grid will be used
+  # Choose grid step sizes and numbers, respectively
+  grid_steps_yaw: 4 # chose number of yaw steps, e.g. north, south, east and west equals 4
+  grid_step_size_x: 0.2 # step size along x axis for discretized pose grid 
+  grid_step_size_y: 0.2 # step size along y axis for discretized pose grid 
+  grid_step_size_z: 0.2 # step size along z axis for discretized pose grid 
+
+  # Whether to return reward on end of iteration or epoch
+  use_cumulated_reward: True
+
+  # Define the desired number of measurements per episode
+  desired_steps: 5
+  desired_coverage: 0.9
+
+  # Testing
+  test_mode: False
+  visualize_poses: False
