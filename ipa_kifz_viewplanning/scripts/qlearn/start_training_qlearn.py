@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-
 '''
 The Q Learning Training Process is based on
 https://bitbucket.org/theconstructcore/openai_examples_projects/src/master/turtle2_openai_ros_example/scripts/start_qlearning.py
@@ -27,15 +26,15 @@ from tensorboardX import SummaryWriter
 if __name__ == '__main__':
 
     rospy.init_node('ipa_kifz_viewplanning_qlearn',
-                    anonymous=True, log_level=rospy.WARN)
+                    anonymous=True,
+                    log_level=rospy.WARN)
 
     # Init OpenAI_ROS Environment
     rospy.loginfo("Init Task Environment")
     task_and_robot_environment_name = rospy.get_param(
         '/ipa_kifz/task_and_robot_environment_name')
     rospy.loginfo("Init ROS Environment")
-    env = StartOpenAI_ROS_Environment(
-        task_and_robot_environment_name)
+    env = StartOpenAI_ROS_Environment(task_and_robot_environment_name)
     # Create the Gym environment
     rospy.loginfo("Gym environment done")
     rospy.loginfo("Starting Learning")
@@ -64,30 +63,41 @@ if __name__ == '__main__':
     nepisodes = rospy.get_param("/ipa_kifz/nepisodes")
     max_nsteps = rospy.get_param("/ipa_kifz/max_nsteps")
 
-     # running_step = rospy.get_param("/ipa_kifz/running_step")
+    # running_step = rospy.get_param("/ipa_kifz/running_step")
 
     # Initialises the algorithm that we are going to use for learning
-    rospy.logdebug("############### ACTION SPACE =>" + str(env.action_space))   
+    rospy.logdebug("############### ACTION SPACE =>" + str(env.action_space))
 
     # init Q-learning environment
-    qlearn = qlearn.QLearn(actions=range(env.action_space.n), epsilon=epsilon, alpha=alpha, gamma=gamma)
+    qlearn = qlearn.QLearn(actions=range(env.action_space.n),
+                           epsilon=epsilon,
+                           alpha=alpha,
+                           gamma=gamma)
     initial_epsilon = qlearn.epsilon
 
     # Discrete Action Space!
     states = []
     for action in range(env.action_space.n):
-        state = ' '.join(map(str, [env.discretized_action_space[action][0][0],
-                                   env.discretized_action_space[action][0][1],
-                                   env.discretized_action_space[action][0][2],
-                                #    np.around(env.discretized_action_space[action][0][3], 2), # TODO
-                                #    np.around(env.discretized_action_space[action][0][4], 2),
-                                #    np.around(env.discretized_action_space[action][0][5], 2),
-                                #    np.around(env.discretized_action_space[action][0][6], 2)
-                                   ]))
+        state = ' '.join(
+            map(
+                str,
+                [
+                    env.discretized_action_space[action][0][0],
+                    env.discretized_action_space[action][0][1],
+                    env.discretized_action_space[action][0][2],
+                    #    np.around(env.discretized_action_space[action][0][3], 2), # TODO
+                    #    np.around(env.discretized_action_space[action][0][4], 2),
+                    #    np.around(env.discretized_action_space[action][0][5], 2),
+                    #    np.around(env.discretized_action_space[action][0][6], 2)
+                ]))
         states.append(state)
-    states.append(' '.join(map(str, [0.0, 0.0, 0.0
-                                    #  , 0.0, 0.0, 0.0, 1.0 # TODO
-                                    ]))) # initial state
+    states.append(' '.join(
+        map(
+            str,
+            [
+                0.0, 0.0, 0.0
+                #  , 0.0, 0.0, 0.0, 1.0 # TODO
+            ])))  # initial state
     qlearn.initQ(states, range(env.action_space.n))
 
     start_time = time.time()
@@ -104,10 +114,16 @@ if __name__ == '__main__':
         observation = env.reset()
         cumulated_reward = 0
         done = False
-        observation[observation==0.] = 0.0 #Normalize -0. to 0.
-        state_0 = ' '.join(map(str, [observation[0], observation[1], observation[2],
-                                    #  observation[3], observation[4], observation[5], observation[6] # TODO
-                                     ]))
+        observation[observation == 0.] = 0.0  #Normalize -0. to 0.
+        state_0 = ' '.join(
+            map(
+                str,
+                [
+                    observation[0],
+                    observation[1],
+                    observation[2],
+                    #  observation[3], observation[4], observation[5], observation[6] # TODO
+                ]))
         # state_0 = env.init_state(discretized_actions)
 
         # decrease epsilon in each episode
@@ -124,28 +140,35 @@ if __name__ == '__main__':
             rospy.logwarn("############### Start Step=>" + str(i))
 
             # Pick an action based on the current state
-            action, previous_actions = qlearn.chooseAction(state_0, previous_actions)
+            action, previous_actions = qlearn.chooseAction(
+                state_0, previous_actions)
             rospy.logwarn("Next action is:" + str(action))
 
             # Execute the action in the environment and get feedback
             observation, reward, done, info = env.step(action)
-            state_1 = ' '.join(map(str, [observation[0], observation[1], observation[2],
-                                        #  observation[3], observation[4], observation[5], observation[6] # TODO
-                                        ]))
+            state_1 = ' '.join(
+                map(
+                    str,
+                    [
+                        observation[0],
+                        observation[1],
+                        observation[2],
+                        #  observation[3], observation[4], observation[5], observation[6] # TODO
+                    ]))
 
             # cumulate reward
             if reward < 0:
                 reward = 0
             cumulated_reward += reward
-            
-            writer.add_scalar('episode_reward', cumulated_reward, x)
 
+            writer.add_scalar('episode_reward', cumulated_reward, x)
 
             # Make the algorithm learn based on the results
             rospy.logwarn("# state we were=>" + str(state_0))
             rospy.logwarn("# action that we took=>" + str(action))
             rospy.logwarn("# reward that action gave=>" + str(reward))
-            rospy.logwarn("# episode cumulated_reward=>" + str(cumulated_reward))
+            rospy.logwarn("# episode cumulated_reward=>" +
+                          str(cumulated_reward))
             rospy.logwarn("# Next state=>" + str(state_1))
             # if len(previous_states) > 0: #TODO WIESO?
             qlearn.learn(state_0, action, reward, state_1)
@@ -162,20 +185,25 @@ if __name__ == '__main__':
                 last_time_steps = np.append(last_time_steps, [int(i + 1)])
                 break
             rospy.logwarn("############### END Step=>" + str(i))
-            
+
         # rospy.logwarn("# updated q-table after episode " + str(x) + "=>" + str(qlearn.q))
         reward_list.append(cumulated_reward)
 
         m, s = divmod(int(time.time() - start_time), 60)
         h, m = divmod(m, 60)
-        rospy.logwarn(("EP: " + str(x + 1) + " - [alpha: " + str(round(qlearn.alpha, 2)) + " - gamma: " + str(
-            round(qlearn.gamma, 2)) + " - epsilon: " + str(round(qlearn.epsilon, 2)) + "] - Reward: " + str(
-            cumulated_reward) + "     Time: %d:%02d:%02d" % (h, m, s)))
+        rospy.logwarn(
+            ("EP: " + str(x + 1) + " - [alpha: " +
+             str(round(qlearn.alpha, 2)) + " - gamma: " +
+             str(round(qlearn.gamma, 2)) + " - epsilon: " +
+             str(round(qlearn.epsilon, 2)) + "] - Reward: " +
+             str(cumulated_reward) + "     Time: %d:%02d:%02d" % (h, m, s)))
 
         qLearnLogger.log_episode(cumulated_reward, episode_poses, qlearn.q)
 
-    rospy.loginfo(("\n|" + str(nepisodes) + "|" + str(qlearn.alpha) + "|" + str(qlearn.gamma) + "|" + str(
-        initial_epsilon) + "*" + str(epsilon_discount) + "|" + str(highest_reward) + "| PICTURE |"))
+    rospy.loginfo(
+        ("\n|" + str(nepisodes) + "|" + str(qlearn.alpha) + "|" +
+         str(qlearn.gamma) + "|" + str(initial_epsilon) + "*" +
+         str(epsilon_discount) + "|" + str(highest_reward) + "| PICTURE |"))
 
     l = last_time_steps.tolist()
     l.sort()

@@ -35,8 +35,8 @@ if __name__ == '__main__':
     # Initialization
     #############################
     rospy.init_node('ipa_kifz_viewplanning_sb',
-                anonymous=True, log_level=rospy.WARN)
-
+                    anonymous=True,
+                    log_level=rospy.WARN)
 
     # Init OpenAI_ROS Environment
     rospy.loginfo("Init Task Environment")
@@ -50,12 +50,10 @@ if __name__ == '__main__':
     # Parameter
     #############################
 
-
     # Common parameters
     policy = rospy.get_param('/ipa_kifz/policy')
     learning_rate = rospy.get_param('/ipa_kifz/learning_rate')
     batch_size = rospy.get_param('/ipa_kifz/batch_size')
-
 
     total_timesteps = rospy.get_param('/ipa_kifz/total_timesteps')
     num_envs = rospy.get_param('ipa_kifz/num_envs', 1)
@@ -69,10 +67,14 @@ if __name__ == '__main__':
         train_freq = rospy.get_param('/ipa_kifz/train_freq')
         gradient_steps = rospy.get_param('/ipa_kifz/gradient_steps')
         n_episodes_rollout = rospy.get_param('/ipa_kifz/n_episodes_rollout')
-        target_update_interval = rospy.get_param('/ipa_kifz/target_update_interval')
-        exploration_fraction = rospy.get_param('/ipa_kifz/exploration_fraction')
-        exploration_initial_eps = rospy.get_param('/ipa_kifz/exploration_initial_eps')
-        exploration_final_eps = rospy.get_param('/ipa_kifz/exploration_final_eps')
+        target_update_interval = rospy.get_param(
+            '/ipa_kifz/target_update_interval')
+        exploration_fraction = rospy.get_param(
+            '/ipa_kifz/exploration_fraction')
+        exploration_initial_eps = rospy.get_param(
+            '/ipa_kifz/exploration_initial_eps')
+        exploration_final_eps = rospy.get_param(
+            '/ipa_kifz/exploration_final_eps')
         max_grad_norm = rospy.get_param('/ipa_kifz/max_grad_norm')
     elif algorithm == "ppo":
         n_steps = rospy.get_param("/ipa_kifz/n_steps")
@@ -101,45 +103,44 @@ if __name__ == '__main__':
     writer = SummaryWriter(sbLogger.log_directory)
 
     def pose_callback(data):
-        sbLogger.log_pose([data.position.x,
-                            data.position.y,
-                            data.position.z,
-                            data.orientation.x,
-                            data.orientation.y,
-                            data.orientation.z,
-                            data.orientation.w])
+        sbLogger.log_pose([
+            data.position.x, data.position.y, data.position.z,
+            data.orientation.x, data.orientation.y, data.orientation.z,
+            data.orientation.w
+        ])
 
     def reward_callback(data):
         sbLogger.log_episode(data.episode_reward)
-        writer.add_scalar('episode_reward', data.episode_reward, data.episode_number)
+        writer.add_scalar('episode_reward', data.episode_reward,
+                          data.episode_number)
 
     pose_sub = rospy.Subscriber("openai/episode_poses", Pose, pose_callback)
-    reward_sub = rospy.Subscriber("openai/reward", RLExperimentInfo, reward_callback)
-
+    reward_sub = rospy.Subscriber("openai/reward", RLExperimentInfo,
+                                  reward_callback)
 
     #############################
     # Gym Environment Stuff
     #############################
 
-    def create_parallel_envs(env_id,env_name):
+
+    def create_parallel_envs(env_id, env_name):
         """
         Helper function for creating parallel environments for training
         """
-        eid = env_id+1
+        eid = env_id + 1
         print("eid: " + str(eid))
         env = StartOpenAI_ROS_Environment_Parallel(env_name, eid)
         return env
 
     envs = []
-    def ret_lambda_func(k,name):
-        return lambda : create_parallel_envs(k,name)
+
+    def ret_lambda_func(k, name):
+        return lambda: create_parallel_envs(k, name)
 
     for k in range(num_envs):
-            envs.append(ret_lambda_func(k,task_and_robot_environment_name))
-            
+        envs.append(ret_lambda_func(k, task_and_robot_environment_name))
 
-    env = StartOpenAI_ROS_Environment(
-        task_and_robot_environment_name)
+    env = StartOpenAI_ROS_Environment(task_and_robot_environment_name)
 
     # env = make_vec_env('IPA_KIFZ_Viewplanning-v0', n_envs=1)
 
@@ -149,8 +150,8 @@ if __name__ == '__main__':
     # Learning Rate Schedule
     #############################
 
-    def linear_schedule(initial_value: float) -> Callable[[float], float]:
 
+    def linear_schedule(initial_value: float) -> Callable[[float], float]:
         def func(progress_remaining: float) -> float:
 
             return progress_remaining * initial_value
@@ -171,25 +172,24 @@ if __name__ == '__main__':
         # )
 
         model = DQN(
-            DQNMlpPolicy, #policy #MlpPolicy
-            env, 
-            learning_rate = linear_schedule(learning_rate),
-            buffer_size = buffer_size,
-            learning_starts = learning_starts, 
-            batch_size = batch_size,
-            tau = tau,
-            gamma = gamma,
-            train_freq = train_freq,
-            gradient_steps = gradient_steps,
-            n_episodes_rollout = n_episodes_rollout,
-            target_update_interval = target_update_interval,
-            exploration_fraction = exploration_fraction,
-            exploration_initial_eps = exploration_initial_eps,
-            exploration_final_eps = exploration_final_eps,
-            max_grad_norm = max_grad_norm,
-            tensorboard_log = sbLogger.log_directory,
-            verbose = 2
-        )
+            DQNMlpPolicy,  #policy #MlpPolicy
+            env,
+            learning_rate=linear_schedule(learning_rate),
+            buffer_size=buffer_size,
+            learning_starts=learning_starts,
+            batch_size=batch_size,
+            tau=tau,
+            gamma=gamma,
+            train_freq=train_freq,
+            gradient_steps=gradient_steps,
+            n_episodes_rollout=n_episodes_rollout,
+            target_update_interval=target_update_interval,
+            exploration_fraction=exploration_fraction,
+            exploration_initial_eps=exploration_initial_eps,
+            exploration_final_eps=exploration_final_eps,
+            max_grad_norm=max_grad_norm,
+            tensorboard_log=sbLogger.log_directory,
+            verbose=2)
 
     elif algorithm == "ppo":
         # custom_ppo_mlppolicy = PPOMlpPolicy(
@@ -198,24 +198,22 @@ if __name__ == '__main__':
         #     linear_schedule(learning_rate),
         # )
 
-
         # Define the RL algorithm and start learning
         model = PPO(
-            PPOMlpPolicy, 
+            PPOMlpPolicy,
             env,
-            learning_rate = learning_rate, #linear_schedule(0.1),
-            n_steps = n_steps, 
-            batch_size = batch_size, 
-            n_epochs = n_epochs, 
-            gamma = gamma, 
-            gae_lambda = gae_lambda, 
-            clip_range = clip_range, 
-            clip_range_vf = None, # - depends on reward scaling!
-            ent_coef = ent_coef, 
-            tensorboard_log = sbLogger.log_directory,
-            verbose = 2,
+            learning_rate=learning_rate,  #linear_schedule(0.1),
+            n_steps=n_steps,
+            batch_size=batch_size,
+            n_epochs=n_epochs,
+            gamma=gamma,
+            gae_lambda=gae_lambda,
+            clip_range=clip_range,
+            clip_range_vf=None,  # - depends on reward scaling!
+            ent_coef=ent_coef,
+            tensorboard_log=sbLogger.log_directory,
+            verbose=2,
         )
-
 
     sbLogger.model = model
     sbLogger.training_env = model.get_env()
@@ -223,14 +221,12 @@ if __name__ == '__main__':
     #############################
     # Learning
     #############################
-
-
     '''Training the model'''
     rospy.logwarn("Start training")
     model.learn(
-        total_timesteps = total_timesteps,
-        log_interval = sbLogger.log_freq * 4,
-        callback = [CheckpointCallback(1000, sbLogger.log_directory)],
+        total_timesteps=total_timesteps,
+        log_interval=sbLogger.log_freq * 4,
+        callback=[CheckpointCallback(1000, sbLogger.log_directory)],
         # tb_log_name='DQN',
     )
 
@@ -238,7 +234,7 @@ if __name__ == '__main__':
     rospy.logwarn("DONE TRAINING")
 
     # Load saved model and make predictions
-    # del model 
+    # del model
     # model = DQN.load("ipa_kifz_viewplanning-v0")
     # obs = env.reset()
     # while True:

@@ -9,42 +9,59 @@ import time
 import os
 import socket
 
+
 # https://github.com/openai/gym/blob/master/gym/core.py
 class RobotGazeboEnv(gym.Env):
+    def __init__(self,
+                 robot_name_space,
+                 controllers_list,
+                 reset_controls,
+                 start_init_physics_parameters=True,
+                 reset_world_or_sim="SIMULATION",
+                 **kwargs):
 
-    def __init__(self, robot_name_space, controllers_list, reset_controls, start_init_physics_parameters=True, reset_world_or_sim="SIMULATION",**kwargs):
-
-        env_id = kwargs.get('env_id',-1)
+        env_id = kwargs.get('env_id', -1)
         self.env_id = env_id
         #bashCommand ='hostname -I | cut -d' ' -f1)'
-        ROSIP=socket.gethostbyname(socket.gethostname()) #127.0.1.1
-        if env_id>=0:
+        ROSIP = socket.gethostbyname(socket.gethostname())  #127.0.1.1
+        if env_id >= 0:
             #os.environ['ROS_PACKAGE_PATH']=ROS_PACKAGE_PATH
             #@HACK Setting ros and gazebo masters can be automated
             #the gazebo master is different for different environment IDs as they can run on multiple computers
-            os.environ['ROS_MASTER_URI'] = "http://"+ROSIP+":1131" + str(env_id)[0]
+            os.environ['ROS_MASTER_URI'] = "http://" + ROSIP + ":1131" + str(
+                env_id)[0]
             if env_id < 3:
-                GAZEBOIP=ROSIP
-                os.environ['GAZEBO_MASTER_URI'] = "http://"+GAZEBOIP+":1135" + str(env_id)[0]
+                GAZEBOIP = ROSIP
+                os.environ[
+                    'GAZEBO_MASTER_URI'] = "http://" + GAZEBOIP + ":1135" + str(
+                        env_id)[0]
             else:
-                GAZEBOIP=ROSIP
-                os.environ['GAZEBO_MASTER_URI'] = "http://"+GAZEBOIP+":1135" + str(env_id)[0]
+                GAZEBOIP = ROSIP
+                os.environ[
+                    'GAZEBO_MASTER_URI'] = "http://" + GAZEBOIP + ":1135" + str(
+                        env_id)[0]
         #    os.environ['ROS_IP'] = ROSIP
         #    os.environ['ROS_HOSTNAME'] = ROSIP
-            rospy.init_node('ipa_kifz_viewplanning_sb_'+str(env_id)[0], anonymous=True, log_level=rospy.WARN)
+            rospy.init_node('ipa_kifz_viewplanning_sb_' + str(env_id)[0],
+                            anonymous=True,
+                            log_level=rospy.WARN)
             print("WORKER NODE " + str(env_id)[0])
 
         # To reset Simulations
         rospy.logdebug("START init RobotGazeboEnv")
-        self.gazebo = GazeboConnection(start_init_physics_parameters,reset_world_or_sim)
-        self.controllers_object = ControllersConnection(namespace=robot_name_space, controllers_list=controllers_list)
+        self.gazebo = GazeboConnection(start_init_physics_parameters,
+                                       reset_world_or_sim)
+        self.controllers_object = ControllersConnection(
+            namespace=robot_name_space, controllers_list=controllers_list)
         self.reset_controls = reset_controls
         self.seed()
 
         # Set up ROS related variables
         self.episode_num = 0
         self.cumulated_episode_reward = 0
-        self.reward_pub = rospy.Publisher('/openai/reward', RLExperimentInfo, queue_size=1)
+        self.reward_pub = rospy.Publisher('/openai/reward',
+                                          RLExperimentInfo,
+                                          queue_size=1)
         self.step_time = 0
         self.step_num = 0
 
@@ -76,7 +93,6 @@ class RobotGazeboEnv(gym.Env):
         :param action:
         :return: obs, reward, done, info
         """
-
         """
         Here we should convert the action num to movement action, execute the action in the
         simulation and get the observations result of performing that action.
@@ -127,15 +143,14 @@ class RobotGazeboEnv(gym.Env):
         :return:
         """
         rospy.logwarn("PUBLISHING REWARD...")
-        self._publish_reward_topic(
-                                    self.cumulated_episode_reward,
-                                    self.episode_num
-                                    )
-        rospy.logwarn("PUBLISHING REWARD...DONE="+str(self.cumulated_episode_reward)+",EP="+str(self.episode_num))
+        self._publish_reward_topic(self.cumulated_episode_reward,
+                                   self.episode_num)
+        rospy.logwarn("PUBLISHING REWARD...DONE=" +
+                      str(self.cumulated_episode_reward) + ",EP=" +
+                      str(self.episode_num))
 
         self.episode_num += 1
         self.cumulated_episode_reward = 0
-
 
     def _publish_reward_topic(self, reward, episode_number=1):
         """
@@ -157,7 +172,7 @@ class RobotGazeboEnv(gym.Env):
         """Resets a simulation
         """
         rospy.logdebug("RESET SIM START")
-        if self.reset_controls :
+        if self.reset_controls:
             rospy.logdebug("RESET CONTROLLERS")
             # self.gazebo.unpauseSim()
             self.controllers_object.reset_controllers()
@@ -226,4 +241,3 @@ class RobotGazeboEnv(gym.Env):
         and extract information from the simulation.
         """
         raise NotImplementedError()
-

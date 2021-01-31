@@ -21,13 +21,14 @@ def StartOpenAI_ROS_Environment(task_and_robot_environment_name):
     4) Launches the world launch and the robot spawn.
     5) It will import the Gym Env and Make it.
     """
-    rospy.logwarn("Env: {} will be imported".format(
-        task_and_robot_environment_name))
+    rospy.logwarn(
+        "Env: {} will be imported".format(task_and_robot_environment_name))
     result = RegisterOpenAI_Ros_Env(task_env=task_and_robot_environment_name,
                                     max_episode_steps=10000)
 
     if result:
-        rospy.logwarn("Register of Task Env went OK, lets make the env..."+str(task_and_robot_environment_name))
+        rospy.logwarn("Register of Task Env went OK, lets make the env..." +
+                      str(task_and_robot_environment_name))
         env = gym.make(task_and_robot_environment_name)
     else:
         rospy.logwarn("Something Went wrong in the register")
@@ -35,19 +36,22 @@ def StartOpenAI_ROS_Environment(task_and_robot_environment_name):
 
     return env
 
-def StartOpenAI_ROS_Environment_Parallel(task_and_robot_environment_name, env_id):
+
+def StartOpenAI_ROS_Environment_Parallel(task_and_robot_environment_name,
+                                         env_id):
     """
     Does the same as the previous function but allows to start multiple Environments in Parallel
     """
-    rospy.logwarn("Env: {} will be imported".format(
-        task_and_robot_environment_name))
+    rospy.logwarn(
+        "Env: {} will be imported".format(task_and_robot_environment_name))
     result = RegisterOpenAI_Ros_Env(task_env=task_and_robot_environment_name,
                                     max_episode_steps=10000)
 
-
     if result:
-        rospy.logwarn("Register of Task Env went OK, lets make the env..."+str(task_and_robot_environment_name))
-        env = gym.make(task_and_robot_environment_name, env_id=int(str(env_id)))
+        rospy.logwarn("Register of Task Env went OK, lets make the env..." +
+                      str(task_and_robot_environment_name))
+        env = gym.make(task_and_robot_environment_name,
+                       env_id=int(str(env_id)))
     else:
         rospy.logwarn("Something Went wrong in the register")
         env = None
@@ -72,15 +76,18 @@ class ROSLauncher(object):
 
         # If the package was found then we launch
         if pkg_path:
-            rospy.loginfo(">>>>>>>>>>Package found in workspace-->"+str(pkg_path))
+            rospy.loginfo(">>>>>>>>>>Package found in workspace-->" +
+                          str(pkg_path))
             launch_dir = os.path.join(pkg_path, "launch")
             path_launch_file_name = os.path.join(launch_dir, launch_file_name)
 
-            rospy.logwarn("path_launch_file_name=="+str(path_launch_file_name))
+            rospy.logwarn("path_launch_file_name==" +
+                          str(path_launch_file_name))
 
-            roslaunch_command = "roslaunch {0} {1} {2}".format(rospackage_name, launch_file_name, arguments)
+            roslaunch_command = "roslaunch {0} {1} {2}".format(
+                rospackage_name, launch_file_name, arguments)
             command = roslaunch_command
-            rospy.logwarn("Launching command="+str(command))
+            rospy.logwarn("Launching command=" + str(command))
 
             p = subprocess.Popen(command, shell=True)
 
@@ -92,8 +99,8 @@ class ROSLauncher(object):
             elif state > 0:
                 rospy.loginfo("Process terminated without error")
 
-
-            rospy.loginfo(">>>>>>>>>STARTED Roslaunch-->" + str(self._launch_file_name))
+            rospy.loginfo(">>>>>>>>>STARTED Roslaunch-->" +
+                          str(self._launch_file_name))
         else:
             assert False, "No Package Path was found for ROS apckage ==>" + \
                 str(rospackage_name)

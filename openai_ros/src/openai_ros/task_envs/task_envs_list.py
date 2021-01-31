@@ -19,7 +19,8 @@ def RegisterOpenAI_Ros_Env(task_env, max_episode_steps=10000):
 
         register(
             id=task_env,
-            entry_point='openai_ros.task_envs.ipa_kifz_viewplanning:IpaKIFZViewplanningEnv',
+            entry_point=
+            'openai_ros.task_envs.ipa_kifz_viewplanning:IpaKIFZViewplanningEnv',
             max_episode_steps=max_episode_steps,
         )
 
