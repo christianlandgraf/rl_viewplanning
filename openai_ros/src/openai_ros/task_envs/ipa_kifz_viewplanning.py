@@ -19,6 +19,7 @@ from scipy.spatial.transform import Rotation
 import sys
 sys.path.append(".")
 import open3d
+import stl
 import sensor_msgs.point_cloud2 as pc2
 
 from ipa_kifz_viewplanning.srv import GetAreaGain, GetAreaGainRequest, GetAreaGainResponse
@@ -92,6 +93,9 @@ class IpaKIFZViewplanningEnv(ipa_kifz_env.IpaKIFZEnv):
             '/ipa_kifz_viewplanning/init_rot_qz', default=0)
         self.init_rot_qw = rospy.get_param(
             '/ipa_kifz_viewplanning/init_rot_qw', default=1)
+
+        # Get action space limits
+        if rospy.has_param('/ipa_kifz_viewplanning/min_range_x'):
         self.min_range_x = rospy.get_param(
             '/ipa_kifz_viewplanning/min_range_x')
         self.min_range_y = rospy.get_param(
@@ -104,6 +108,8 @@ class IpaKIFZViewplanningEnv(ipa_kifz_env.IpaKIFZEnv):
             '/ipa_kifz_viewplanning/max_range_y')
         self.max_range_z = rospy.get_param(
             '/ipa_kifz_viewplanning/max_range_z')
+        else:
+            self.set_grid_limits()
 
         # For a discretized action space
         self.is_discretized = rospy.get_param(
@@ -533,6 +539,65 @@ class IpaKIFZViewplanningEnv(ipa_kifz_env.IpaKIFZEnv):
 
         return viewpoint_list
 
+    def set_grid_limits(self):
+        """Compute start and end boundaries for action space
+        This is done by getting the workpiece bounding box
+        and some manual chosen threshold in xyz direction.
+        """
+        wp_mesh = stl.mesh.Mesh.from_file(self.workpiece_path)
+        minx = maxx = miny = maxy = minz = maxz = None
+        for p in wp_mesh.points:
+            # p contains (x, y, z)
+            if minx is None:
+                minx = p[stl.Dimension.X]
+                maxx = p[stl.Dimension.X]
+                miny = p[stl.Dimension.Y]
+                maxy = p[stl.Dimension.Y]
+                minz = p[stl.Dimension.Z]
+                maxz = p[stl.Dimension.Z]
+            else:
+                maxx = max(p[stl.Dimension.X], maxx)
+                minx = min(p[stl.Dimension.X], minx)
+                maxy = max(p[stl.Dimension.Y], maxy)
+                miny = min(p[stl.Dimension.Y], miny)
+                maxz = max(p[stl.Dimension.Z], maxz)
+                minz = min(p[stl.Dimension.Z], minz)
+
+        # TODO: Add variables to task configuration yaml
+        epsilon = -0.05
+        z_init = 0.3
+
+        # Set lower and upper boundaries
+        x0 = minx - epsilon
+        xlim = maxx + epsilon
+        y0 = miny - epsilon
+        ylim = maxy + epsilon
+        z0 = maxz + z_init
+
+        # Add world coordinate system
+        trafo_world_wp = np.identity(4)
+        trafo_world_wp[:3, 3] = self.workpiece_pose[:3]
+        trafo_world_wp[:3, :3] = Rotation.from_euler(
+            'xyz', self.workpiece_pose[3:]).as_matrix()
+
+        # Convert limits to homogeneuous trafo
+        trafo_wp_0 = np.identity(4)
+        trafo_wp_0[:3, 3] = [x0, y0, z0]
+        trafo_wp_lim = np.identity(4)
+        trafo_wp_lim[:3, 3] = [xlim, ylim, z0]
+
+        # Compute min and max ranges
+        trafo_world_0 = np.dot(trafo_world_wp, trafo_wp_0)
+        trafo_world_lim = np.dot(trafo_world_wp, trafo_wp_lim)
+        self.min_range_x = trafo_world_0[0, 3]
+        self.min_range_y = trafo_world_0[1, 3]
+        self.min_range_z = trafo_world_0[2, 3]
+        self.max_range_x = trafo_world_lim[0, 3]
+        self.max_range_y = trafo_world_lim[1, 3]
+        self.max_range_z = trafo_world_lim[2, 3]
+
+        return
+
     def get_grid(self):
         """This method samples viewpoints in a regular grid, which is defined by
         its type (triangle or square) and step sizes in different directions 
@@ -548,7 +613,7 @@ class IpaKIFZViewplanningEnv(ipa_kifz_env.IpaKIFZEnv):
                 (self.max_range_x - self.min_range_x) / self.step_size_x) + 1
             y_steps = ceil(
                 (self.max_range_y - self.min_range_y) / self.step_size_y) + 1
-            z_steps = round(
+            z_steps = ceil(
                 (self.max_range_z - self.min_range_z) / self.step_size_z) + 1
 
             # define view angles for pitch
@@ -601,7 +666,7 @@ class IpaKIFZViewplanningEnv(ipa_kifz_env.IpaKIFZEnv):
                 (self.max_range_x - self.min_range_x) / self.step_size_x) + 1
             y_steps = ceil(
                 (self.max_range_y - self.min_range_y) / self.step_size_y) + 1
-            z_steps = round(
+            z_steps = ceil(
                 (self.max_range_z - self.min_range_z) / self.step_size_z) + 1
 
             # define view angles for pitch
@@ -662,11 +727,11 @@ class IpaKIFZViewplanningEnv(ipa_kifz_env.IpaKIFZEnv):
         # Load mesh and transform to world coordinate system
         rospack = rospkg.RosPack()
         dataset_path = rospack.get_path('ipa_kifz_data')
-        workpiece_path = os.path.join(dataset_path, dataset, "meshes",
+        self.workpiece_path = os.path.join(dataset_path, dataset, "meshes",
                                       workpiece + ".STL")
         workpiece_pcd_path = os.path.join(dataset_path, dataset, "pointclouds",
                                           workpiece + ".pcd")
-        self.workpiece_mesh = open3d.io.read_triangle_mesh(workpiece_path)
+        self.workpiece_mesh = open3d.io.read_triangle_mesh(self.workpiece_path)
         self.workpiece_area = open3d.geometry.TriangleMesh.get_surface_area(
             self.workpiece_mesh)
         T = np.eye(4)
@@ -699,7 +764,8 @@ class IpaKIFZViewplanningEnv(ipa_kifz_env.IpaKIFZEnv):
             workpiece_pose.pose.orientation.z = orientation_quat[2]
             workpiece_pose.pose.orientation.w = orientation_quat[3]
 
-            self.scene.add_mesh(workpiece, workpiece_pose, workpiece_path)
+            self.scene.add_mesh(workpiece, workpiece_pose, self.workpiece_path)
+        return
 
     def sample_wp(self, workpiece):
         """Sample a workpeice
