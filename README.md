@@ -21,7 +21,7 @@
 #### Install dependencies
 
 - Set Python 3 as default: ```sudo update-alternatives --install /usr/bin/python python /usr/bin/python3.8 10```.
-- Install: ```pip sudo apt install python3-pip```
+- Install: ```sudo apt install python3-pip```
 - Recommended, but not necessary: catkin_tools https://catkin-tools.readthedocs.io/en/latest/installing.html. Install missing libraries with pip.
 - ```sudo apt-get install python3-catkin-tools```
 - ```sudo apt install python3-catkin-lint python3-pip```
@@ -44,10 +44,9 @@ git clone https://github.com/christianlandgraf/Universal_Robots_ROS_Driver.git
 cd catkin_ws
 rosdep install --from-paths src --ignore-src -r -y
 ```
-- Install ROS dependencies : ```rosdep install --from-paths src --ignore-src -r -y```
 - Install the following ROS binary packages
 ```
-sudo apt install ros-noetic-moveit ros-noetic-moveit-resources ros-noetic-geometry2 ros-noetic-graph-msgs ros-noetic-velodyne-simulator ros-noetic-industrial_robot_status_controller
+sudo apt install ros-noetic-moveit ros-noetic-moveit-resources ros-noetic-geometry2 ros-noetic-graph-msgs ros-noetic-velodyne-simulator ros-noetic-industrial-robot-status-controller
 ```
 - Additionally, clone the following to your workspace and build it from source. If they are available as binary package, install them as described above
 
