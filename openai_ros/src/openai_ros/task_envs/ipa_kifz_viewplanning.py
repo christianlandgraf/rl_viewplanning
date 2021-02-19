@@ -96,18 +96,18 @@ class IpaKIFZViewplanningEnv(ipa_kifz_env.IpaKIFZEnv):
 
         # Get action space limits
         if rospy.has_param('/ipa_kifz_viewplanning/min_range_x'):
-        self.min_range_x = rospy.get_param(
-            '/ipa_kifz_viewplanning/min_range_x')
-        self.min_range_y = rospy.get_param(
-            '/ipa_kifz_viewplanning/min_range_y')
-        self.min_range_z = rospy.get_param(
-            '/ipa_kifz_viewplanning/min_range_z')
-        self.max_range_x = rospy.get_param(
-            '/ipa_kifz_viewplanning/max_range_x')
-        self.max_range_y = rospy.get_param(
-            '/ipa_kifz_viewplanning/max_range_y')
-        self.max_range_z = rospy.get_param(
-            '/ipa_kifz_viewplanning/max_range_z')
+            self.min_range_x = rospy.get_param(
+                '/ipa_kifz_viewplanning/min_range_x')
+            self.min_range_y = rospy.get_param(
+                '/ipa_kifz_viewplanning/min_range_y')
+            self.min_range_z = rospy.get_param(
+                '/ipa_kifz_viewplanning/min_range_z')
+            self.max_range_x = rospy.get_param(
+                '/ipa_kifz_viewplanning/max_range_x')
+            self.max_range_y = rospy.get_param(
+                '/ipa_kifz_viewplanning/max_range_y')
+            self.max_range_z = rospy.get_param(
+                '/ipa_kifz_viewplanning/max_range_z')
         else:
             self.set_grid_limits()
 
@@ -728,7 +728,7 @@ class IpaKIFZViewplanningEnv(ipa_kifz_env.IpaKIFZEnv):
         rospack = rospkg.RosPack()
         dataset_path = rospack.get_path('ipa_kifz_data')
         self.workpiece_path = os.path.join(dataset_path, dataset, "meshes",
-                                      workpiece + ".STL")
+                                           workpiece + ".STL")
         workpiece_pcd_path = os.path.join(dataset_path, dataset, "pointclouds",
                                           workpiece + ".pcd")
         self.workpiece_mesh = open3d.io.read_triangle_mesh(self.workpiece_path)

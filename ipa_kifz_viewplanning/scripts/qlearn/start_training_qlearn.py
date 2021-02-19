@@ -79,25 +79,18 @@ if __name__ == '__main__':
     states = []
     for action in range(env.action_space.n):
         state = ' '.join(
-            map(
-                str,
-                [
-                    env.discretized_action_space[action][0][0],
-                    env.discretized_action_space[action][0][1],
-                    env.discretized_action_space[action][0][2],
-                    #    np.around(env.discretized_action_space[action][0][3], 2), # TODO
-                    #    np.around(env.discretized_action_space[action][0][4], 2),
-                    #    np.around(env.discretized_action_space[action][0][5], 2),
-                    #    np.around(env.discretized_action_space[action][0][6], 2)
-                ]))
+            map(str, [
+                env.discretized_action_space[action][0][0],
+                env.discretized_action_space[action][0][1],
+                env.discretized_action_space[action][0][2],
+                np.around(env.discretized_action_space[action][0][3], 2),
+                np.around(env.discretized_action_space[action][0][4], 2),
+                np.around(env.discretized_action_space[action][0][5], 2),
+                np.around(env.discretized_action_space[action][0][6], 2)
+            ]))
         states.append(state)
-    states.append(' '.join(
-        map(
-            str,
-            [
-                0.0, 0.0, 0.0
-                #  , 0.0, 0.0, 0.0, 1.0 # TODO
-            ])))  # initial state
+    states.append(' '.join(map(
+        str, [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0])))  # initial state
     qlearn.initQ(states, range(env.action_space.n))
 
     start_time = time.time()
@@ -116,14 +109,10 @@ if __name__ == '__main__':
         done = False
         observation[observation == 0.] = 0.0  #Normalize -0. to 0.
         state_0 = ' '.join(
-            map(
-                str,
-                [
-                    observation[0],
-                    observation[1],
-                    observation[2],
-                    #  observation[3], observation[4], observation[5], observation[6] # TODO
-                ]))
+            map(str, [
+                observation[0], observation[1], observation[2], observation[3],
+                observation[4], observation[5], observation[6]
+            ]))
         # state_0 = env.init_state(discretized_actions)
 
         # decrease epsilon in each episode
@@ -147,14 +136,11 @@ if __name__ == '__main__':
             # Execute the action in the environment and get feedback
             observation, reward, done, info = env.step(action)
             state_1 = ' '.join(
-                map(
-                    str,
-                    [
-                        observation[0],
-                        observation[1],
-                        observation[2],
-                        #  observation[3], observation[4], observation[5], observation[6] # TODO
-                    ]))
+                map(str, [
+                    observation[0], observation[1], observation[2],
+                    observation[3], observation[4], observation[5],
+                    observation[6]
+                ]))
 
             # cumulate reward
             if reward < 0:
@@ -170,7 +156,6 @@ if __name__ == '__main__':
             rospy.logwarn("# episode cumulated_reward=>" +
                           str(cumulated_reward))
             rospy.logwarn("# Next state=>" + str(state_1))
-            # if len(previous_states) > 0: #TODO WIESO?
             qlearn.learn(state_0, action, reward, state_1)
 
             # Save poses for logging
