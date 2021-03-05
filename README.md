@@ -120,6 +120,10 @@ Gazebo does not close | Copy the following command in your ~/.bashrc to directly
     - ```algorithm:=<algorithm>``` The RL Algorithm to be used, currently available: ```qlearn```, ```ppo```, ```dqn``` (or ```viewpoint_sampling```)
 3. Have a look in the log directory or check Tensorboard via ```tensorboard --logdir=<logname>```
 
+## Miscellaneous
+
+A demonstration video is available [here](https://www.youtube.com/watch?v=0mqPu0_qdD4).
+
 ## TODO
 
 - Add ROS dependencies
