@@ -1,0 +1,53 @@
+ipa_kifz_viewplanning: #namespace
+   
+  # Workpiece
+  workpiece_name: "workpiece_1"
+  # workpiece_name: "abc_mesh_8_scale_6"
+  workpiece_pose: [1.9, -0.2, 1.06, 3.14, -3.14, 0] # workpiece_1
+  # workpiece_pose: [1.3, -1.1, 1.13, 0, 0, 0] # abc_mesh_1_scale_4
+  # workpiece_pose: [1.3, -1.1, 1.25, 0, 0, 1.57] # abc_mesh_2_scale_15
+  # workpiece_pose: [1.9, -1.1, 1.43, 0, 0, 1.57] # abc_mesh_3_scale_5
+  # workpiece_pose: [1.3, -0.6, 1.1, 0, 0, 1.57] # abc_mesh_4_scale_4
+  # workpiece_pose: [1.3, -0.6, 1.04, 1.57, 0, 0] # abc_mesh_6_scale_8
+  # workpiece_pose: [1.4, -0.6, 1.11, 0, 1.57, 0] # abc_mesh_7_scale_12
+  # workpiece_pose: [1.5, -0.6, 1.05, 0, 0, -1.57] # abc_mesh_8_scale_6
+  # workpiece_pose: [1.2, -0.6, 1.07, -1.57, 0, 1.57] # abc_mesh_9_scale_4
+  # workpiece_pose: [1.2, -0.6, 1.04, 0, 0, 0] # abc_mesh_12_scale_15
+
+  # Define an initial pose and a sphere around that
+  # The pose is defined as the transformation from world to sensor tcp
+  init_pos_z: 1.4
+  init_rot_qx: 0.0
+  init_rot_qy: 0.5  # 0.7071068 # 0.5
+  init_rot_qz: 0.0
+  init_rot_qw: 0.8660254 # 0.7071068 # 0.8660254
+  min_range_x: 1.1999
+  max_range_x: 1.6001
+  min_range_y: -1.001
+  max_range_y: -0.1999
+  min_range_z: 1.3999 # 1.3699
+  max_range_z: 1.4001 # 1.3701
+
+  # Whether the action space should be discretized or not
+  is_discretized: False #PPO=False
+  
+  # If discretized, choose whether to use a grid instead of the pre-sampled poses
+  use_grid: True
+  # if grid is chosen, decide whether it should be square or triangle grid
+  triangle_grid: False # if set to false, a square grid will be used
+  # Choose grid step sizes and numbers, respectively
+  grid_steps_yaw: 4 # chose number of yaw steps, e.g. north, south, east and west equals 4
+  grid_step_size_x: 0.2 # step size along x axis for discretized pose grid 
+  grid_step_size_y: 0.2 # step size along y axis for discretized pose grid 
+  grid_step_size_z: 0.2 # step size along z axis for discretized pose grid 
+
+  # Whether to return reward on end of iteration or epoch
+  use_cumulated_reward: True  #PPO=True
+
+  # Define the desired number of measurements per episode
+  desired_steps: 20
+  desired_coverage: 0.9
+
+  # Testing
+  test_mode: False
+  visualize_poses: False
