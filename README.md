@@ -124,6 +124,23 @@ Gazebo does not close | Copy the following command in your ~/.bashrc to directly
 
 A demonstration video is available [here](https://www.youtube.com/watch?v=0mqPu0_qdD4).
 
+Please cite our work if you use the repository:
+
+> Landgraf, C., Meese, B., Pabst, M., Martius, G., & Huber, M. F. (2021). A Reinforcement Learning Approach to View Planning for Automated Inspection Tasks. Sensors, 21(6), 2030.
+
+```
+@article{landgraf2021reinforcement,
+  title={A Reinforcement Learning Approach to View Planning for Automated Inspection Tasks},
+  author={Landgraf, Christian and Meese, Bernd and Pabst, Michael and Martius, Georg and Huber, Marco F},
+  journal={Sensors},
+  volume={21},
+  number={6},
+  pages={2030},
+  year={2021},
+  publisher={Multidisciplinary Digital Publishing Institute}
+}
+```
+
 ## TODO
 
-- Add ROS dependencies
+- Add dependencies
