@@ -39,7 +39,7 @@
 git clone https://github.com/christianlandgraf/universal_robot.git
 git clone https://github.com/christianlandgraf/Universal_Robots_ROS_Driver.git
 ```
-- Install ROS dependencies  from source 
+- Install ROS dependencies
 ```
 cd catkin_ws
 rosdep install --from-paths src --ignore-src -r -y
@@ -141,6 +141,3 @@ Please cite our work if you use the repository:
 }
 ```
 
-## TODO
-
-- Add dependencies
